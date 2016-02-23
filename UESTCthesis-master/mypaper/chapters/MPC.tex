@@ -160,6 +160,32 @@ V =
 \end{equation*}
 接下来，我们想计算功耗，使利用这个功耗计算出的核的温度$Y_k$  和设计者定义的期望的顶温度$Y_{ceil}$ 之间的差最小。
 我们首先将这个差的测量值表示为$(Y_{ceil}-Y_k)^T(Y_{ceil}-Y_k)$ ， 最优的功耗分布是使$Y_k=Y_{ceil}$ 的功耗。
+此外，对于实际的考虑，我们优先选择功耗分布不进行急剧变化。
+所以额外的调整项 $\Delta P_k^TR\Delta P_k$ 也加到$(Y_{ceil}-Y_k)^T(Y_{ceil}-Y_k)$ 上，这就形成
+\begin{equation}\label{eq:cost_fun}
+F = (Y_{ceil}-Y_k)^T(Y_{ceil}-Y_k)+\Delta P_k^TR\Delta P_k
+\end{equation}
+作为变量$\Delta P_k$ 的最终函数，我们的目标就是使这个函数最小化。
+$R=rI_{N_c \times N_c}$ 是一个调整矩阵，$r$ 是调整参数，这决定该函数两项之间的权重。
+对于不同的核数通过实验可以的到合适的值。
+这里要注意，$Y_k$ 也是未知变量$\Delta P_k$ 的函数。
+
+下一步，对式\eqref{eq:cost_fun}求一阶导数，使它等于零，就可以得到优化的最小值。
+$\Delta P_k$的解是
+\begin{equation}\label{eq:opt_delta_p}
+\Delta P_k = (\Phi^T \Phi + R)^{-1}\Phi^T(Y_{ceil}-V\hat{T}(k)).
+\end{equation}
+
+在每个模型预测控制MPC时刻 $k$，我们只需要从\eqref{eq:opt_delta_p}计算得到的控制信号$\Delta P(k)$， 
+然后更新功耗分布
+\begin{equation}\label{eq:power_update}
+\bar{P}(k) \gets P(k) + \Delta P(k),
+\end{equation}
+其中$\bar{P}(k)$  是更新后的功耗分布。
+结果就是，更新后功耗输入使核的温度 $Y(k)$ 趋近于期望顶温度。
+换句话说，更新后的功耗是在没有温度要求冲突下能达到的最高温度。
+
+\section{基于期望功耗的任务迁移和动态电压频率调整}\label{sec:dtm_mpc}
 
 
 
