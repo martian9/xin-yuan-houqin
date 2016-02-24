@@ -27,18 +27,12 @@
 图~\ref{fig:cpu_partition} (a)是一个简单的低层划分的例子。这是一个100核微处理器，被划分为四个16核普通块（标记为A、B、D、E），五个核数4到8核的边缘块（标记为C、F、G、H、I）。
 低层的功耗匹配将在每一个块内执行。图~\ref{fig:bi2} 展示的正是图~\ref{fig:cpu_partition} (a)中块I内的二部图匹配。
 
-\begin{figure}[H]
+\begin{pics}[h]{100核微处理器的垂直视图 （作为分层算法的一个例子）}{fig:cpu_partition}
   \centering
-    \subfigure[微处理器分割成块准备进行低层二部图匹配。]
-  {
-    \includegraphics[width=0.32\columnwidth]{fig/part1}
-  }
-  \subfigure[低层二部图匹配之后留下的未匹配核（红色）。]
-  {
-    \includegraphics[width=0.32\columnwidth]{fig/partmod}
-  }
-  \caption{100核微处理器的垂直视图 （作为分层算法的一个例子）。}\label{fig:cpu_partition}
-\end{figure}
+    \addsubpic{微处理器分割成块准备进行低层二部图匹配}{width=0.32\columnwidth}{fig/part1}
+  \addsubpic{低层二部图匹配之后留下的未匹配核（红色）}{width=0.32\columnwidth}{fig/partmod}
+
+\end{pics}
 
 显然，只执行低层的块内功耗匹配不足以找到所有的匹配对。
 例如，在图~\ref{fig:cpu_partition} (a)的块 I 中， 图~\ref{fig:bi2} (b) 已经表示出
@@ -77,27 +71,17 @@ $w(p_i, p_j) = 0$， $w(\bar{p}_i, \bar{p}_j) = 0$  。
 图~\ref{fig:partitioning} (a)展示了$\mathcal{G}_p$ 的一个例子。 
 我们这里需要解决的是图$\mathcal{G}_p$上的最小割问题。 
 
-\begin{figure}
+\begin{pics}{分层算法在100核微处理器上的高层处理过程示例}{fig:partitioning}
   \centering
-    \subfigure[图 $\mathcal{G}_p$ （为简化并未表示出边和权重）.]
-  {
-    \includegraphics[width=0.32\columnwidth]{fig/partition}
-  }
-  \subfigure[ $\mathcal{G}_p$上的初始割（作为改进迭代最小割算法的第一步）]
-  {
-    \includegraphics[width=0.32\columnwidth]{fig/partition3}
-  }
-  \subfigure[$\mathcal{G}_p$上的最小割，然后每个高层块中的二部图匹配]
-  {
-    \includegraphics[width=0.32\columnwidth]{fig/match_aft_partition}
-  }
-  \subfigure[对未匹配的功耗用DVFS做最后调整]
-  {
-    \includegraphics[width=0.32\columnwidth]{fig/DVFS}
-  }
-
-  \caption{分层算法在100核微处理器上的高层处理过程示例}\label{fig:partitioning}
-\end{figure}
+    \addsubpic{图 $\mathcal{G}_p$ （为简化并未表示出边和权重）}
+  {width=0.32\columnwidth}{fig/partition}
+  \addsubpic{ $\mathcal{G}_p$上的初始割（作为改进迭代最小割算法的第一步）}
+  {width=0.32\columnwidth}{fig/partition3}
+  \addsubpic{$\mathcal{G}_p$上的最小割，然后每个高层块中的二部图匹配}
+  {width=0.32\columnwidth}{fig/match_aft_partition}
+  \addsubpic{对未匹配的功耗用DVFS做最后调整}
+  {width=0.32\columnwidth}{fig/DVFS}
+\end{pics}
 
 作为一个迭代算法，第一步是做一个初始割，将$V_p$ 分成两个子集 $V_{p1}$ 和 $V_{p2}$。
 定义割的权值就是割集的权重的和。图~\ref{fig:partitioning} (b)给出了一个例子，

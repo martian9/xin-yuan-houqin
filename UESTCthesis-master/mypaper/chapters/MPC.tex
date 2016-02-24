@@ -219,18 +219,12 @@ $\Delta P_k$的解是
  
  图~\ref{fig:bi2}展示了一个二部图匹配的例子， 这个例子中带权重的二部图阈值为$e_{th}=3$，
   图~\ref{fig:bi2} (b)是匹配结果，表示出了匹配对 $(p_2, \bar{p}_1)$， $(p_3, \bar{p}_2)$和 $(p_4, \bar{p}_3)$。
- \begin{figure}[H]
-   \centering
-     \subfigure[阈值 $e_{th}=3$的带权重二部图。]
-   {
-     \includegraphics[width=0.32\columnwidth]{fig/bi1.eps}
-   }
-   \subfigure[二部图匹配结果。 匹配对用实线连接。]
-   {
-     \includegraphics[width=0.32\columnwidth]{fig/bi2.eps}
-   }
-   \caption{带权重二部图匹配的例子}\label{fig:bi2}
- \end{figure}
+ \begin{pics}[H]{带权重二部图匹配的例子}{fig:bi2}
+     \addsubpic{阈值 $e_{th}=3$的带权重二部图}
+   {width=0.32\columnwidth}{fig/bi1.eps}
+   \addsubpic{二部图匹配结果。 匹配对用实线连接}
+   {width=0.32\columnwidth}{fig/bi2.eps}
+ \end{pics}
  
 
 
