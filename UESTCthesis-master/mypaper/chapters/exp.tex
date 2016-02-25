@@ -71,7 +71,102 @@
 我们在实验中实现了开源项目MAGMA V2，这个由\cite{Hanumaiah:TCAD'11}的作者提供。MAGMA只能给出100核处理器的结果，对于更大的核数情况会有“超出内存”错误。
 在这里所有的方法都用相同的激活周期，功耗信息和顶温度。
 
+首先我们不进行任何温度管理让100核处理器在最大速度上运行。图~\ref{fig:temp} (a)就是这个处理器的瞬态温度。我们可以看出，核的温度大概是从$90^{\circ}$C
+到 $120^{\circ}$C。温度在$120^{\circ}$C 左右会影响芯片的可靠性。我们也测量了温度的方差，见图~\ref{fig:var_comp} (a)。可以看出，没有任何温度管理的情况下，核之间的温度差也很大。
 
+\begin{figure}[H]
+  \centering
+    \subfigure[Temperature traces without any DTM method.]
+  {
+    \includegraphics[width=0.32\columnwidth]{fig/T_bef}
+  }
+    \subfigure[Temperature traces with the new hierarchical DTM method activated at the $200$ second.]
+  {
+    \includegraphics[width=0.32\columnwidth]{fig/T_aft}
+  }
+  \subfigure[Temperature traces with DTM method in cite \protect\cite{MaWang:APCCAS'14} activated at the $200$ second.]
+  {
+    \includegraphics[width=0.32\columnwidth]{fig/T_cer}
+  }
+    \subfigure[Temperature traces with the DTM method with DVFS only activated at the $200$ second.]
+  {
+    \includegraphics[width=0.32\columnwidth]{fig/T_dvfs}
+  }
+
+  \caption{Transient temperature traces of the $100$-core
+    CPU with different DTM methods. Lines with different colors
+    represents temperature traces of different cores. The new method
+    in (b) and \cite{MaWang:APCCAS'14} in (C) both successfully tracks
+    the ceiling temperature. But the DVFS only method in (d) has many
+    low temperature cores, which means the chip performance is lower.}\label{fig:temp}
+\end{figure}
+\begin{figure}
+  \centering
+    \subfigure[The temperature variance without any DTM method.]
+  {
+    \includegraphics[width=0.32\columnwidth]{fig/var_bef}
+  }
+    \subfigure[The temperature variance with the new hierarchical DTM method activated at the $200$ second.]
+  {
+    \includegraphics[width=0.32\columnwidth]{fig/var_aft}
+  }
+  \subfigure[The temperature variance with DTM method in \protect\cite{MaWang:APCCAS'14} activated at the $200$ second.]
+  {
+    \includegraphics[width=0.32\columnwidth]{fig/var_cer}
+  }
+    \subfigure[The temperature variance with the DTM method with DVFS only activated at the $200$ second.]
+  {
+    \includegraphics[width=0.32\columnwidth]{fig/var_dvfs}
+  }
+
+  \caption{Transient variances among cores in the $100$-core
+    CPU with different DTM methods. The temperature variance of the
+    new method is slightly higher than that of the method in
+    \cite{MaWang:APCCAS'14}, but much lower than that of the DVFS only
+  method.}\label{fig:var_comp}
+\end{figure}
+
+接下来我们把顶温度设定在$105^{\circ}$C，测试新的分层动态温度管理方法在100核处理器上的效果。
+分层动态温度管理方法在第200秒时被激活，激活周期为$20$s。对应的瞬态温度就是图~\ref{fig:temp} (b)，对应的温度方差就是图~\ref{fig:var_comp} (b)。
+分层动态温度管理方法被激活之后，所有核的温度开始趋近于设定的顶温度$105^{\circ}$C，核之间的温度差也减小了很多。
+
+作为对比，\cite{MaWang:APCCAS'14}中的基于MPC的结合任务迁移和DVFS的动态温度管理方法和基于MPC结合DVFS的方法也进行了测试。
+顶温度同样被设定为$105^{\circ}$C，所有的方法仍然在相同的时间点被激活，即第200秒，激活周期仍然是$20$s。
+图~\ref{fig:temp} (c) (d) 和 图~\ref{fig:var_comp} (c) (d)就是这两种方法对应的瞬态温度，和核之间温度方差。
+我们提出的方法和\cite{MaWang:APCCAS'14}中的方法有相似的瞬态温度，比\cite{MaWang:APCCAS'14}中的核之间温度方差稍微大一点点（后面会介绍，新方法在开销和扩展性上比\cite{MaWang:APCCAS'14}要好得多）。
+基于MPC结合DVFS的动态温度管理方法在瞬态温度和核之间温度差上要比前两种方法差很多。
+
+下面我们对比\cite{Hanumaiah:TCAD'11}中的方法。这个方法也是执行DVFS和任务迁移，来使核的温度趋近于顶温度。
+不过，这个方法为了减小计算开销，在做动态温度管理决策的时候假设每个核都核其他核热隔离。这种假设在核数较少的多核芯片上或许可以，因为核数较少时，核之间有大面积的缓存区域阻隔了核间热交换。
+但是在众核情况下，因为每个核面积较小，热交换很明显，并且不能被忽略。
+该方法的100核处理器温度即图~\ref{fig:magma} (a)所示。因为这里的仿真步长较大，所以温度波形是直的线段。
+依据这样的温度来做动态温度管理决策，温度大部分时间都是趋近顶温度的。
+但是因为核与核之间的零热交换，所以这样的温度并不是实际的温度。
+我们修改了MAGMA 程序，画出了考虑核间热交换的实际温度，如图~\ref{fig:magma} (b)所示。
+我们很清楚地看到这个方法的动态温度管理决策不是优化的，会明显的超出实际温度的限制。
+从图~\ref{fig:magma}我们可以看出，温度控制有一个延时调整问题。
+这是因为在\cite{Hanumaiah:TCAD'11}的方法中，当当前温度并不完全等于顶温度的时候，核或者被关掉（如果当前温度高于顶温度），或者全速运行（如果当前温度低于顶温度）。
+但是在图~\ref{fig:temp}中，所有基于MPC的动态温度管理方法都没有这个问题，因为它们可以提前预测来做决策，这样就会是比较平滑的温度控制。
+
+\begin{figure}
+  \centering
+    \subfigure[Temperature traces of cores by assuming no heat exchange
+    among cores.]
+  {
+    \includegraphics[width=0.7\columnwidth]{fig/magma_100_max}
+  }
+    \subfigure[Actual temperature traces of cores by enabling heat
+    exchange among cores.]
+  {
+    \includegraphics[width=0.7\columnwidth]{fig/comp_magma_100}
+  }
+  \caption{Transient temperature traces of cores by performing DTM in
+    \cite{Hanumaiah:TCAD'11} on the $100$-core
+    microprocessor. Core to core heat exchange has huge impact on
+    temperatures for many-core microprocessors, causing the
+    $105^{\circ}$C ceiling temperature to be seriously violated. Overshoot
+    problem is also significant comparing to the MPC based techniques.}\label{fig:magma}
+\end{figure}
 
 
 
