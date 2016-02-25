@@ -168,7 +168,81 @@
     problem is also significant comparing to the MPC based techniques.}\label{fig:magma}
 \end{figure}
 
+表~\ref{tab:var}记录了不同核数的处理器的核之间温度方差。表中$var_o$ 是没用任何动态温度管理方法时核之间温度方差，
+$var_d$是基于MPC只结合DVFS的动态温度管理方法的核之间温度方差，
+$var_c$是\cite{MaWang:APCCAS'14}中动态温度管理方法的核之间温度方差，
+$var_n$是我们的分层温度管理方法的核之间温度方差，
+$var_h$是\cite{Hanumaiah:TCAD'11}中动态温度管理方法的核之间温度方差。
+不同核数的结果类似，\cite{MaWang:APCCAS'14}中方法稍微优于我们的分层动态温度管理方法，基于MPC只结合DVFS的方法明显有较大的核间温度方差。
+\cite{Hanumaiah:TCAD'11}中的方法只完成了$100$核的实验，其核之间温度方差与\cite{MaWang:APCCAS'14}中的方法接近。
 
+\begin{table}
+\centering
+ \caption{The temperature variance among cores in CPUs with different core
+   configuration. $var_o$ is the variance without
+any DTM method,  
+$var_d$ is variance with DTM using DVFS only, 
+$var_c$ is variance with DTM in \cite{MaWang:APCCAS'14}, 
+and $var_n$ is variance with our
+new hierarchical method, and $var_h$ is the variance with method in \cite{Hanumaiah:TCAD'11}. \label{tab:var}}{
+ \begin{tabular}{|c|c|c|c|c|c|}
+ \hline
+ \hline
+ %%Distribution  & $var_o$ & $var_d$ &$var_n$ & $P_d$ & $P_n$ \\
+ Configuration  & $var_o$ & $var_d$ & $var_c$ & $var_n$ & $var_h$ \\
+ \hline 
+ \hline
+ $100$ 核 ($10 \times 10$) & 54.2 & 18.8 & 5.5 & 7.6 & 5.9\\
+
+ \hline
+ $256$ 核 ($16 \times 16$) & 50.8 & 19.3 & 3.4 & 6.5 & N/A\\
+ \hline
+ $400$ 核 ($20 \times 20$) & 52.1 & 16.7 & 2.5 & 4.1 & N/A\\
+ \hline
+ $625$ 核 ($25 \times 25$) & 50.5 & 15.9 & 2.3 & 4.1 & N/A\\
+ \hline
+ \hline
+ \end{tabular}}
+ \end{table}
+ 
+ 从前面的比较可以看出，我们新提出的分层动态温度管理方法与\cite{MaWang:APCCAS'14}中的方法在瞬态温度和核之间温度方差上的相差不大。
+ 在众核处理器上与 \cite{MaWang:APCCAS'14}、\cite{Hanumaiah:TCAD'11}相比，我们的新方法真正的亮点是可扩展性和小开销。
+ 我们测定这几种算法的平均每秒执行时间。
+ 我们的新方法主要由MPC，二部图匹配，最小割划分组成。为更好分析，我们将算法的总执行时间分为MPC时间 $t_p$ ，匹配时间 $t_m$ ，最小割划分时间 $t_a$ 。
+ 匹配操作的执行时间一部分为低层匹配时间，另一部分为高层匹配时间。对于低层匹配时间，如果这里有多个匹配操作在并行执行，我们只计最长的一个，这个时间才是主导延时的时间。
+ \cite{MaWang:APCCAS'14}中的方法也有MPC时间 $t_p$ 和匹配时间 $t_m$ ，但是没有最小割划分时间 $t_a$ 。
+ 只用DVFS的方法只有MPC时间 $t_p$。
+ 
+ 
+ 
+  \begin{table*}
+\tabcolsep=2pt
+ \caption{The average runtime per second of the DTM methods on CPUs with
+   different core configurations. $t_p$ represents MPC time, 
+$t_m$ means task migration matching time, and $t_a$  denotes for minimum cut partitioning time.\label{tab:time}}{
+ \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
+ \hline
+	        & \multicolumn{4}{c|}{分层方法} & \multicolumn{3}{c|}{\cite{MaWang:APCCAS'14}} & \multicolumn{2}{c|}{仅DVFS方法}& \multicolumn{2}{c|}{\cite{Hanumaiah:TCAD'11}} \\
+ \hline
+核数	& $t_p$ & $t_m$ &$t_a$ &
+$t_{all}$ & $t_p$ & $t_m$ &$t_{all}$  &
+$t_p$ &$t_{all}$ & $t_{m}$ &$t_{all}$\\
+                               &   $(10^{-4}s)$ & $(10^{-4}s)$ &
+                               $(10^{-4}s)$ & $(10^{-4}s)$ & $(10^{-4}s)$
+                               &   $(s)$  & $(s)$  & $(10^{-4}s)$ & $(10^{-4}s)$ &   $(s)$  & $(s)$\\
+ \hline 
+ \hline
+$100$ & 1.58 & 1.63  & 0     & 3.21 & 1.49 & 0.01 & 0.01 & 1.60 & 1.60 & 0.01 & 0.01\\
+ \hline
+$256$ & 2.85 & 19.26 & 1.58  & 23.7 & 2.93 & 0.45 & 0.45 & 2.80 & 2.80 & 0.09 & 0.09\\
+ \hline
+$400$ & 4.88 & 7.77  & 3.27  & 15.9 & 5.38 & 1.90 & 1.90 & 5.29 & 5.29 & 0.34 & 0.34\\
+ \hline
+$625$ & 9.09 & 12.27 & 17.49 & 38.8 & 8.27 & 8.63 & 8.63 & 8.87 & 8.87 & 0.99 & 0.99\\
+ \hline
+ \hline
+ \end{tabular}}
+ \end{table*}
 
 
 
