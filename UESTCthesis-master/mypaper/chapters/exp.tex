@@ -208,14 +208,21 @@ new hierarchical method, and $var_h$ is the variance with method in \cite{Hanuma
  从前面的比较可以看出，我们新提出的分层动态温度管理方法与\cite{MaWang:APCCAS'14}中的方法在瞬态温度和核之间温度方差上的相差不大。
  在众核处理器上与 \cite{MaWang:APCCAS'14}、\cite{Hanumaiah:TCAD'11}相比，我们的新方法真正的亮点是可扩展性和小开销。
  我们测定这几种算法的平均每秒执行时间。
- 我们的新方法主要由MPC，二部图匹配，最小割划分组成。为更好分析，我们将算法的总执行时间分为MPC时间 $t_p$ ，匹配时间 $t_m$ ，最小割划分时间 $t_a$ 。
+ 我们的新方法主要由MPC，二部图匹配（任务迁移），最小割划分组成。为更好分析，我们将算法的总执行时间分为MPC时间 $t_p$ ，匹配时间 $t_m$ ，最小割划分时间 $t_a$ 。
  匹配操作的执行时间一部分为低层匹配时间，另一部分为高层匹配时间。对于低层匹配时间，如果这里有多个匹配操作在并行执行，我们只计最长的一个，这个时间才是主导延时的时间。
  \cite{MaWang:APCCAS'14}中的方法也有MPC时间 $t_p$ 和匹配时间 $t_m$ ，但是没有最小割划分时间 $t_a$ 。
  只用DVFS的方法只有MPC时间 $t_p$。
+ 尽管\cite{Hanumaiah:TCAD'11}中的方法只完成了100核的情况，但是我们还是可以测试它的任务迁移时间$t_m$。我们可以用正确维度的随机矩阵输入给对应的函数。
+ 表~\ref{tab:time}记录了各算法在不同核数处理器上的执行时间。很显然随核数增长，\cite{MaWang:APCCAS'14}中的方法开销明显上升。
+ 从400核的情况开始，每秒的平均管理决策时间要超过1s，这是完全不能接受的。
+ \cite{Hanumaiah:TCAD'11}中的方法在任务迁移计算上的时间也随核数很快增长，使它不能扩展到众核应用中。
+ 根据这篇论文，我们找出任务迁移算法的时间复杂度为$O(nq)^3$（跟\cite{MaWang:APCCAS'14}中的任务迁移算法接近），其中$n$是核数，$q$是任务数量。
+ 这篇论文中假设 $n=q$ ，那么当核数增长额时候，$O(n^6)$的复杂度使任务迁移占用了太多的时间。
+ 相对地，我们新的分层算法的计算时间增长缓慢。即使是625核的情况（这已经是很大的核数了），我们的方法平均每秒消耗 4 ms 做管理决策。
+ 这仅仅是 $0.4\%$ 的计算时间花费在少数几个核上，因此这个可以被忽略。
+ 当然，仅仅用DVFS的方法需要最少的时间计算开销，但是我们的新方法只在任务迁移上花费很少的开销就使性能显著提成，下面将继续介绍。
  
- 
- 
-  \begin{table*}
+  \begin{table*}[h]
 \tabcolsep=2pt
  \caption{The average runtime per second of the DTM methods on CPUs with
    different core configurations. $t_p$ represents MPC time, 
@@ -244,7 +251,52 @@ $625$ & 9.09 & 12.27 & 17.49 & 38.8 & 8.27 & 8.63 & 8.63 & 8.87 & 8.87 & 0.99 & 
  \end{tabular}}
  \end{table*}
 
-
+\begin{table}[h]
+\centering
+ \caption{The average number of instructions per second of one core on
+   CPUs with different configurations. $MIPS_o$ represents the IPS in million (MIPS) of the core without any DTM method,
+$MIPS_d$ is for MIPS of DTM with DVFS only,
+and $MIPS_n$ denotes MIPS of our new hierarchical method.\label{tab:ips}}{
+ \begin{tabular}{|c|c|c|c|}
+ \hline
+ \hline
+ Configuration  &$MIPS_o$ & $MIPS_d$  & $MIPS_n$ \\%&  \textcolor{red}{$MIPS_h$} \\
+ \hline 
+ \hline
+ $100$ cores ($10 \times 10$) & 290.8 & 279.6 & 281.5 \\%& \textcolor{red}{231.9}\\
+ \hline
+ $256$ cores ($16 \times 16$) & 210.2 & 202.9 & 207.1 \\%& \\
+ \hline
+ $400$ cores ($20 \times 20$) & 182.1 & 174.7 & 178.8 \\%& \\
+ \hline
+ $625$ cores ($25 \times 25$) & 156.5 & 150.2 & 154.4 \\%& \\
+ \hline
+ \hline
+ \end{tabular}}
+ \end{table}
+ 
+ 最后我们测定不同众核处理器采用各种动态温度管理方法的性能。
+ 每秒执行的指令数（IPS）是衡量处理器性能一个标准。
+ 因为\cite{MaWang:APCCAS'14} 和 \cite{Hanumaiah:TCAD'11}中的方法有很大的开销，不能完成众核处理器的管理决策，
+ 所以在性能对比中并没有考虑这两个方法。
+ 表~\ref{tab:ips}记录了采用新分层方法和仅采用DVFS的方法时的平均 IPS。
+ 在表中 ， $MIPS_o$ 表示不采用任何动态温度管理方法时单个处理器核的平均IPS（以百万计就是MIPS），
+ $MIPS_d$ 表示采用DVFS方法时单个处理器核的平均IPS，
+ $MIPS_n$ 表示采用我们的新方法时单个处理器核的平均IPS
+ $MIPS_o$ 是理想性能，是在处理器没有任何温度限制的情况下取得的。
+  $MIPS_n$ 只比  $MIPS_o$ 小一点，说明在确定管理决策时，我们新的分层算法是很有效的。
+  从表中可以看出，我们的新算法在性能上优于只采用DVFS的算法。
+  尽管新算法有稍微大一点的开销，但是消耗在任务迁移决策的时间减少了DVFS激活的次数，带来的是性能收益。
+  我们注意到，新方法相比于DVFS方法在吞吐量上的提升和运行的应用有很大关系。
+  比如，如果这里有很低温度的核（甚至是闲置无任务的核），新方法就会比DVFS方法有更明显的吞吐量提升，
+  因为低温核可以被任务迁移充分利用，减少DVFS操作。
+  
+ 
+ 
+ 
+ 
+ 
+ 
 
 
 
