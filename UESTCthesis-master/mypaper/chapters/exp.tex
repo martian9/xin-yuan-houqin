@@ -20,6 +20,7 @@
 在我们的这个研究中，我们并不考虑完全关掉一部分核的策略，这会是我们将来的研究方向。
 \begin{table}[H]
 \centering
+\caption{对不同核数处理器在新分层方法的参数}\label{tab:param}{
  \begin{tabular}{|c|c|c|c|}
  \hline
  \hline
@@ -36,7 +37,7 @@
  \hline
  \hline
  \end{tabular}
- \caption{对不同核数处理器在新分层方法的参数}\label{tab:param}
+ }
  \end{table}
  
 对于不同核数的处理器，为保证温度能有效地趋近顶温度，任务迁移过程中的阈值$e_{th}$和 式 \eqref{eq:cost_fun} 中 MPC调整参数$r$ 需要手动调整。
@@ -71,6 +72,7 @@
 我们在实验中实现了开源项目MAGMA V2，这个由\cite{Hanumaiah:TCAD'11}的作者提供。MAGMA只能给出100核处理器的结果，对于更大的核数情况会有“超出内存”错误。
 在这里所有的方法都用相同的激活周期，功耗信息和顶温度。
 
+\section{与其他方法的瞬态温度比较}\label{sec:temp_comp}
 首先我们不进行任何温度管理让100核处理器在最大速度上运行。图~\ref{fig:temp} (a)就是这个处理器的瞬态温度。我们可以看出，核的温度大概是从$90^{\circ}$C
 到 $120^{\circ}$C。温度在$120^{\circ}$C 左右会影响芯片的可靠性。我们也测量了温度的方差，见图~\ref{fig:var_comp} (a)。可以看出，没有任何温度管理的情况下，核之间的温度差也很大。
 
@@ -205,6 +207,8 @@ new hierarchical method, and $var_h$ is the variance with method in \cite{Hanuma
  \end{tabular}}
  \end{table}
  
+ \section{与其他方法的算法执行时间比较}\label{sec:time_comp}
+ 
  从前面的比较可以看出，我们新提出的分层动态温度管理方法与\cite{MaWang:APCCAS'14}中的方法在瞬态温度和核之间温度方差上的相差不大。
  在众核处理器上与 \cite{MaWang:APCCAS'14}、\cite{Hanumaiah:TCAD'11}相比，我们的新方法真正的亮点是可扩展性和小开销。
  我们测定这几种算法的平均每秒执行时间。
@@ -274,6 +278,8 @@ and $MIPS_n$ denotes MIPS of our new hierarchical method.\label{tab:ips}}{
  \hline
  \end{tabular}}
  \end{table}
+ 
+ \section{与其他方法的性能比较}\label{sec:ips_comp}
  
  最后我们测定不同众核处理器采用各种动态温度管理方法的性能。
  每秒执行的指令数（IPS）是衡量处理器性能一个标准。
