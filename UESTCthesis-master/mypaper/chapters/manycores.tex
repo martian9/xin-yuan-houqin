@@ -125,29 +125,52 @@ DVFS成为一种被广泛应用的动态温度管理技术。DVFS 技术是调�
 这样可以降低功耗，甚至于节省能量~\cite{le2010dynamic}。
 DVFS 技术在计算系统中应用广泛，从嵌入式，到平板，桌面系统，以至于到高性能服务器系统。
 
-我们简单介绍一下功耗的来源。对于传统的CMOS集成电路，其系统功耗可以分成两部分，即动态功耗和静态功耗。
-动态功耗源于负载电容的充放电和电路短路电流。静态功耗源于漏电流，即使器件不活动也存在着。功耗表示如下：
-\begin{equation}\label{eq:DVFS}
-\begin{split}
-P_d &= CfV^2 \\
-P_s &= I_lV  
-\end{split}
+现在大多数数字电路都是 CMOS 电路，尤其是在处理器方面。所以我们简要分析一下 CMOS 电路的功耗，找出功率，电压，频率之间的关系。
+CMOS 电路的功耗是动态功耗，静态功耗和电路短路功耗的综合，这些功耗如图~\ref{fig:inverter}所示：
+\begin{itemize}
+\item  ~$P_d$ 表示动态功耗，源于电容的充电和放电（1）。
+\item  ~$P_s$ 表示静态功耗，源于晶体管反向偏置（2）。
+\item  ~$P_{sh}$ 表示电路短路电流，源于开关时 $V_{dd}$ 到 $GND$ 的直接通路。
+\end{itemize}
+CMOS电路总功耗表示为：
+\begin{equation}\label{eq:cmos}
+P_{cmos} = P_d + P_s + P_{sh} 
 \end{equation}
-其中， $P_d$ 为动态功耗， $P_s$ 为静态功耗。 $C$ 是晶体管栅极电容（取决于它的特征尺寸），
-$f$ 是操作频率，$V$ 是电源电压， $I_l$ 为漏电流。
-稳定操作所需电压是由电路时钟频率确定的，如果频率降低，电压也可以响应降低。
-动态功耗可以显著减少，因为上面显示 $P_d \propto V^2$ 。静态功耗也可以减少。
-\\ 
-\begin{figure}[H]
+\\
+\begin{figure}
   \centering
     \includegraphics[width=0.7\columnwidth]{fig/inverter}
-  \caption{温度与漏电流的关系\cite{zhang2003hotleakage}}\label{fig:inverter}
+  \caption{简单CMOS反相器功耗示意图}\label{fig:inverter}
 \end{figure}
 
-DVFS可以通过降低处理器的操作频率来降低功耗，但是这会增加程序运行时间，降低处理器性能。
+动态功耗是CMOS电路功耗的很大一部分，\ref{sec:leakage}中已经提到近年来静态功耗也占据总功耗的很大一部分，其可以表示如下：
+\begin{equation}\label{eq:DVFS}
+\begin{split}
+P_d &= CfV_{dd}^2 \\
+P_s &= I_lV_{dd}  
+\end{split}
+\end{equation}
+其中，  $C$ 是晶体管栅极电容（取决于它的特征尺寸），
+$f$ 是操作频率，$V_{dd}$ 是电源电压， $I_l$ 为漏电流。
+
+动态电压频率调整技术降低电压可以有效地减少功耗。
+动态功耗可以显著减少，因为上面显示 $P_d \propto V^2$ 。静态功耗也可以减少。
+ 降低电源电压会限制操作频率~\cite{suleiman2005dynamic}，其关系可表示为：
+ \begin{equation}\label{eq:fv}
+ f \propto \frac{(V_{dd} - V_t)^2}{V_{dd}} 
+ \end{equation}
+ 其中 $V_t$ 表示 CMOS 阈值电压。这也就是说，频率的降低可以伴随着电压也做降低调整。
+ 时钟频率 $f$ 降低一半时，能降低处理器功耗，任务完成时间会延长，但是总的能量并没有少。
+ 当电源电压也降低一半时，功耗将会继续降低，但是任务完成时间并没有继续延长，这样能量也被减少了。如图~\ref{fig:energy}所示。
+ 
+\begin{pics}{任务的功耗与能耗}{fig:energy}
+\addsubpic{最大电压频率运行时的功耗与能耗}{width=0.5\columnwidth}{fig/energy1}
+\addsubpic{频率减半时的功耗与能耗}{width=0.5\columnwidth}{fig/energy2}
+\addsubpic{电压频率都减半时的功耗与能耗}{width=0.5\columnwidth}{fig/energy3}
+\end{pics}
 
 
-
+因为DVFS通过降低处理器的操作频率来降低功耗会增加程序运行时间，这会显著影响处理器性能。
 
 
 
