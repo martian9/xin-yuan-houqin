@@ -137,6 +137,12 @@ P_s &= I_lV
 $f$ 是操作频率，$V$ 是电源电压， $I_l$ 为漏电流。
 稳定操作所需电压是由电路时钟频率确定的，如果频率降低，电压也可以响应降低。
 动态功耗可以显著减少，因为上面显示 $P_d \propto V^2$ 。静态功耗也可以减少。
+\\ 
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=0.7\columnwidth]{fig/inverter}
+  \caption{温度与漏电流的关系\cite{zhang2003hotleakage}}\label{fig:inverter}
+\end{figure}
 
 DVFS可以通过降低处理器的操作频率来降低功耗，但是这会增加程序运行时间，降低处理器性能。
 
