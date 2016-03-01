@@ -118,6 +118,17 @@ R_{h2a} = (h_1v_f(1-e^{\frac{h_2v_f^{h_3}+h_4}{h_1v_f}}))^{-1}
 \ref{sec:reliability}节中提到过这个调整会产生大幅度和频繁的热循环，加速封装疲劳。
 为了实现低功耗，功耗管理策略可能关掉一些部件整合计算，这会产生局部高温点和大的温度梯度。
 
+\subsection{芯片温度预测控制技术}\label{sec:temperature}
+温度预测控制技术是控制决策的基础，只要预测是准确的，提前才去适当的操作就可以避免高温事件。
+温度预测控制技术方面的研究已经很多，过去常用的温度预测控制方法是，直接对将来芯片的温度，和负载功耗进行预测。根据预测出的下一时刻的温度，反过来对现有的负载功耗进行调整。
+在~\cite{yeo2008predictive}中，
+\\
+\begin{figure}
+  \centering
+    \includegraphics[width=0.7\columnwidth]{fig/inverter}
+  \caption{简单CMOS反相器功耗示意图}\label{fig:inverter}
+\end{figure}
+
 \subsection{动态电压频率调整技术}\label{sec:DVFS}
 
 过去 动态电压频率调整技术（DVFS）被广泛应用于功耗和能量优化中，随着芯片热问题的凸显，DVFS也被广泛应用在处理器热管理中。
@@ -136,12 +147,7 @@ CMOS电路总功耗表示为：
 \begin{equation}\label{eq:cmos}
 P_{cmos} = P_d + P_s + P_{sh} 
 \end{equation}
-\\
-\begin{figure}
-  \centering
-    \includegraphics[width=0.7\columnwidth]{fig/inverter}
-  \caption{简单CMOS反相器功耗示意图}\label{fig:inverter}
-\end{figure}
+
 
 动态功耗是CMOS电路功耗的很大一部分，\ref{sec:leakage}中已经提到近年来静态功耗也占据总功耗的很大一部分，其可以表示如下：
 \begin{equation}\label{eq:DVFS}
@@ -160,7 +166,7 @@ $f$ 是操作频率，$V_{dd}$ 是电源电压， $I_l$ 为漏电流。
  f \propto \frac{(V_{dd} - V_t)^2}{V_{dd}} 
  \end{equation}
  其中 $V_t$ 表示 CMOS 阈值电压。这也就是说，频率的降低可以伴随着电压也做降低调整。
- 时钟频率 $f$ 降低一半时，能降低处理器功耗，任务完成时间会延长，但是总的能量并没有少。
+ 时钟频率 $f$ 降低一半时，能降低处理器功耗，任务完成时间会延长，但是总的能量并没有少。程序运行时间增加会显著影响处理器性能，这也是 DVFS 的缺点之一。
  当电源电压也降低一半时，功耗将会继续降低，但是任务完成时间并没有继续延长，这样能量也被减少了。如图~\ref{fig:energy}所示。
  
 \begin{pics}{任务的功耗与能耗}{fig:energy}
@@ -169,8 +175,14 @@ $f$ 是操作频率，$V_{dd}$ 是电源电压， $I_l$ 为漏电流。
 \addsubpic{电压频率都减半时的功耗与能耗}{width=0.5\columnwidth}{fig/energy3}
 \end{pics}
 
-
+为了在多频处理器上执行DVFS操作，操作系统需要先预测或者估计将来的任务负载（比如通过MPC方法，后面会介绍），然后将其转换为频率值 $f_{des}$。
+这个值被用于调整处理器的时钟频率 $f$  和 电源电压 $V_{dd}$。 
+~\cite{Zanini:ECCTD'09} 中的方法就是用 MPC 方法做预测，用DVFS做调整，保证芯片在安全温度以下。
 因为DVFS通过降低处理器的操作频率来降低功耗会增加程序运行时间，这会显著影响处理器性能。
+所以很多方法中 DVFS 并不是单独使用，往往结合任务迁移来降低对处理器性能的影响（下面将详细介绍任务迁移）。
+
+\subsection{任务迁移技术}\label{sec:taskm}
+
 
 
 
