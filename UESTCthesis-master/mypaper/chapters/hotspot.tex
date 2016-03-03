@@ -1,0 +1,114 @@
+% !Mode:: "TeX:UTF-8"
+
+\chapter{芯片热建模方法}
+
+为了应对超大规模集成电路功耗和的增长，在设计阶段做热分析变得越来越重要，做热分析需要用到热模型。
+超大规模集成电路早期设计阶段，就是在还没有版图信息时就需要做热分析。现在体系结构层面的热管理技术也利用简洁热模型做温度预测。
+这一章主要介绍一下热模型基本知识，尤其介绍一种简洁的热建模方法HotSpot。
+
+\section{热传导理论}\label{sec:thermal}
+所有的集成电路产生的热必须被移除或传送到周围环境当中，不然的话，温度积累会越来越高。
+根据热力学第一定律，能量守恒定律，从热区域传出的热能和冷却液传入的热能是相等的。
+热力学第二定律是，热一定是由热的区域传到冷的区域。
+
+热传导控制方程是傅里叶定律：
+\begin{equation}\label{eq:fourier}
+q = -k\frac{dT}{dx}
+\end{equation}
+
+式 \eqref{eq:fourier} 是傅里叶定律的一维形式。
+其中，$ q $ 是热通量（$W/m^2$），即单位面积单位时间的热流。 $k $ 是材料的热导率（$W/(m \cdot K)$）。
+式 \eqref{eq:fourier} 表明在介质的一点上，热通量 $q$ 是和这一点上的温度梯度成正比关系的。
+减号表示热流是向温度降低的方向。
+\pic{ 一维热传导}{width=0.4\columnwidth}{fig/heat}
+参考图 \ref{fig/heat}，这里 $q = Q/A $ ，其中 $Q$ 是热传输率，就是单位时间上的热生成或者消散的热量，通常情况下等于功耗 $P$，也就是能量消耗率。 
+$A$ 是热传导面积。 式 \eqref{eq:fourier} 就变成 式 \eqref{eq:fourier1}。
+\begin{equation}\label{eq:fourier1}
+Q = -kA\frac{T_2-T_1}{L}
+\end{equation}
+
+如果定义热阻 $R_{th} = (T_1 -T_2)/Q$ ，温度下降至除以热传输率，我们可以得到
+\begin{equation}\label{eq:Rth}
+R_{th} = (T_1-T_2)/Q = \frac{1}{k}\frac{L}{A}
+\end{equation}
+
+可以发现式 \eqref{eq:fourier} 和大家熟知的电路理论中的欧姆定律相似：
+\begin{equation}\label{eq:Ohm}
+R = (V_1-V_2)/I = \rho \frac{L}{A}
+\end{equation}
+
+因此电路和热系统有一个有趣的对偶 \raisebox{0.5mm}{------}热阻率（$1/k$）和电阻率（$\rho$）；
+温度差（$\Delta T$）和电压差（$\Delta V$）；
+热传导率（$Q$ 或者功耗 $P$ ）和电流（$I$）；
+热阻（$R_{th}$） 和电阻（$R$）。
+
+热传导也是一个瞬态过程，更加通用的带时间的热扩散方程为：
+\begin{equation}\label{eq:general}
+ \rho c_p \frac{\partial T(x,y,z,t)}{\partial t} = \nabla \cdot[k(x,y,z,T)\nabla T(x,y,z,t)] +g(x,y,z,t)
+\end{equation}
+其中，$\rho$ 是材料的密度（$kg/m^3$），不是电阻率；$g$ 是热源的体积功耗密度（$W/m^3$）；
+$c_p$ 是比热（$J/(kg \cdot ^\circ C)$）。
+%在这里热导率$k$ 实际上是一个位置函数，
+
+对于稳态情况，就是式 \eqref{eq:general} 中 $\partial T/\partial t $ 项为 0。
+可以验证，稳态下热扩散方程的一维形式可以简化成式 \eqref{eq:fourier} 的傅里叶定律。
+
+假设 $g$ 和 $k$ 是常数，将式 \eqref{eq:general}写成一维形式，两遍从 $0$ 到 $L$积分变量 $x$，$g\cdot L = Q/A = q$，即热通量， 就得到了如下形式：
+\begin{equation}\label{eq:general1}
+ (\rho c_p A L) \frac{d T(t)}{d t} = k A \frac{\Delta T(t)}{L} + Q
+\end{equation}
+
+式 \eqref{eq:general1} 的右边第一项是通过热阻 $R_{th}$的热量，与式 \eqref{eq:Rth}相似。注意$\Delta T = T_2 - T_1$。
+该式可以变换为
+\begin{equation}\label{eq:cap}
+ C_{th} \frac{d T(t)}{d t} + \frac{ T_1 -T_2}{R_{th}} = Q
+\end{equation}
+其中，$C_{th} = \rho c_p A L = \rho c_p V $ 被定义为热容， $V$ 是材料的体积。
+
+根据电路理论，$ C  \frac{d V(t)}{d t} = i_c(t)$ ， 表示通过电容的电流量等于它的电容值与它两端电压差的一阶导的乘积。
+这正类似于式 \eqref{eq:cap} 中的第一项。这也正是定义 $C_{th}$为热容的原因。
+热容表示材料的热吸收能力，正如电容表示材料吸收积累电荷的能力。
+式 \eqref{eq:cap} 表示通过热容的热流（AC部分） 加上通过热阻的热流（DC部分）等于通过该材料的总热容。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
