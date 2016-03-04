@@ -83,11 +83,11 @@ $c_p$ 是比热（$J/(kg \cdot ^\circ C)$）。
 
 \subsection{主要和次要热传输路径}\label{sec:path}
 大多现在VLSI系统的封装有若干不同材料的叠层组成，如图 \ref{fig/layers}。
-\pic{ 一维热传导}{width=0.7\columnwidth}{fig/layers}
+\pic{ 典型CBGA封装的堆叠层}{width=0.7\columnwidth}{fig/layers}
 HotSpot热模型就以此为例来说明。
 典型的层有：散热片，散热层，热界面材料（导热膏），硅衬底，芯片互连层，C4垫，陶瓷封装衬底，焊料球等。
 堆叠芯片封装（SCP）和 3D IC设计也是堆叠分层结构，可以作为通用堆叠结构的扩展很容易建模，如图 \ref{fig/path}。
-\pic{ 一维热传导}{width=0.5\columnwidth}{fig/path}
+\pic{HotSpot中用的抽象堆叠层结构}{width=0.5\columnwidth}{fig/path}
 
 构建 HotSpot 热模型时，不同层的位置是首先要被确定的。
 然后每一层被划分为若干块。例如图 \ref{fig:layer}(c) 中，可以根据不同的设计需求，将硅衬底按照结构单元或者规则网格划分。
@@ -124,7 +124,10 @@ HotSpot热模型就以此为例来说明。
 每个节点也都有一个连接到地的热容 $C_{th} = \alpha c_p \rho t A$ ，其中 $c_p$ 和 $\rho$ 分别是材料的比热和密度。
 因子  $\alpha \approx 0.5$ 是集中分布占热 RC 时间常数的比例因子。
 
+最后，扩散到空气的对流热阻建模为 $R_c = 1/(h\cdot A_c)$ ， 其中 $A_c$ 是对流表面积， $h$ 是热传输系数，这是边界条件依赖的。
+对于不同对流条件下典型散热片的典型 $h$ 值可以在散热参数表中找到。
 
+值得注意的是，以上主热流路径上的热容和热阻的推导方法可以用于不同精度建模。
 
 
 
