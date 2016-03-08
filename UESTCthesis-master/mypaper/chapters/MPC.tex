@@ -8,17 +8,19 @@
 模型预测控制方法通过设定期望温度，来预测期望功耗，本章详细介绍其推导过程。
 然后就是知道期望功耗之后，有了引导就需要有效控制策略进行动态温度管理操作。
 %在这一章我们将介绍基于模型预测控制方法的动态温度管理方法。
-\ref{sec:therm_model}节中介绍结合模型预测控制MPC的热模型，\ref{sec:mpc}节介绍怎么用MPC计算期望的用于引导动态温度管理方法功耗，最后\ref{sec:dtm_mpc}节说明怎么样用MPC计算得到的功耗来引导任务迁移和DVFS。
+ \ref{sec:therm_model} 节中介绍结合模型预测控制MPC的热模型， \ref{sec:mpc} 节介绍怎么用MPC计算期望的用于引导动态温度管理方法功耗，最后 \ref{sec:dtm_mpc} 节说明怎么样用MPC计算得到的功耗来引导任务迁移和DVFS。
 \section{微处理器热模型}\label{sec:therm_model}
-热系统和电路系统是相似的，我们可以用热阻，热容，和等效的热电流电压源来建立微处理器的热模型。
-类似于电路系统，$l$ 核的微处理器热模型可以被表达为常微分方程，
+在第\ref{chap:model}章中已经介绍过，热系统和电路系统是相似的，我们可以用热阻，热容，和等效的热电流电压源来建立微处理器的热模型。
+在硅片层，这里假设核按规则网格排列，类似于图 \ref{fig/9core}所示 $9$核处理器核分布。这样对硅片层的划分就可以按照核划分为规则的网格单元。
+\pic{9核处理器核分布}{width=0.5\columnwidth}{fig/9core}
+类似于电路系统，$l$ 核的微处理器热模型可以被表达为常微分方程~\cite{WangTan:TODAES'13}，
 \begin{equation}\label{eq:therm_model_cont} 
 \begin{split}
 G T(t) + C \dot{T}(t) &= B_c P(t),\\
 Y(t) &= L T(t),
 \end{split}
 \end{equation}
-其中，$T(t) \in \mathbb{R}^n$ 是表示处理器 $n$ 块温度的向量，包括 $l$个核($l < n$)， 边界节点和封装部分的节点；
+其中，$T(t) \in \mathbb{R}^n$ 是表示处理器被划分成的 $n$ 块的温度的向量，包括 $l$个核($l < n$)， 封装部分的节点等；
 $G \in \mathbb{R}^{n\times n}$ 包含热阻信息； 
 $C \in \mathbb{R}^{n \times n}$ 包含热容信息；
 $B_c \in \mathbb{R}^{n \times l}$ 包括功率输入的拓扑信息；
@@ -41,7 +43,7 @@ $B_d$ 是由 $G$、 $C$、 和 $B_c$ 根据离散\eqref{eq:therm_model_cont}的�
 
 \section{用模型预测控制方法计算期望的功耗}\label{sec:mpc}
 
-\ref{sec:therm_model}节中已经说明，用热模型 \eqref{eq:therm_model_disc}， 可以由给定的功耗输入 $P(k)$ 来计算
+ \ref{sec:therm_model} 节中已经说明，用热模型 \eqref{eq:therm_model_disc}， 可以由给定的功耗输入 $P(k)$ 来计算
 芯片上的核的温度 $Y(k)$， 这足以进行热估计和仿真。
 对于动态温度管理问题，由给定的功耗来计算期望的功耗也是很重要的，因为动态温度管理方法需要操作功耗方面来管理温度。
 有的时候为了简化，可以利用静态热模型由给定的温度信息来计算功耗，静态热模型可以由模型 \eqref{eq:therm_model_cont} 去掉热容项来得到。
@@ -232,7 +234,9 @@ $\Delta P_k$的解是
  \end{pics}
  
 
-
+\section{本章小结}\label{sec:xiaojie4}
+本章主要介绍了结合模型预测控制的处理器热模型，并详细推导了处理器热模型进行温度计算和用模型预测控制方法进行期望功耗预测。
+最后还说明了
 
 
 
