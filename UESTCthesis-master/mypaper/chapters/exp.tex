@@ -2,7 +2,11 @@
 
 \chapter{新的分层动态热管理方法的实现和结果比较}\label{sec:exp}
 
-\section{新方法的实现}\label{sec:method_implement}
+前面的章节已经介绍了众核处理器动态温度管理方法的基础知识，也详细说明了新提出的分层动态温度管理方法。
+接下来就要实现新的算法，并验证该算法比其他方法更有优势。
+ \ref{sec:method_implement} 主要介绍算法实现的详细细节。 后面三节介绍新的算法与其他动态温度管理方法的优劣， \ref{sec:temp_comp} 介绍瞬态温度上的比较， \ref{sec:time_comp} 介绍算法占用的计算时间开销的比较，
+ \ref{sec:ips_comp} 进行采用不同动态温度管理算法时的处理器性能比较。
+\section{新的分层动态热管理方法的实现}\label{sec:method_implement}
 本论文中新的动态温度管理方法的实现是在一个具有两个 8 核 16 线程 CPU 的 linux 服务器上进行的，每个 CPU 主频为 2.90GHZ，服务器内存 64GB。
 新的分层动态热管理方法主要用MATLAB实现。
 我们分别构建了四个不同的处理器核配置的众核处理器，从 $100$ 核（$10 \times 10$）到 $625$ 核（$25 \times 25$）。
@@ -62,132 +66,75 @@
 在这种情况下，我们在迁移间隔内需要保证安全的时候只能执行DVFS。
 
 在实验中，除了任务迁移决策计算的开销，任务迁移操作的开销也要考虑进去。
-正常的任务迁移操纵开销大概是 $10^6$ 个时钟周期，对 $1$GHZ的处理器大概是 $1$ms\cite{Cuesta:ISVLSI'10}。
+正常的任务迁移操纵开销大概是 $10^6$ 个时钟周期，对 $1$GHZ的处理器大概是 $1$ms~\cite{Cuesta:ISVLSI'10}。
 因为在众核处理器中核数很大，核之间通信时间很长，这样的开销会很大。
 所以我们设定上百核处理器的任务迁移时间为 $100$ms。
 在实验中我们要考虑任务迁移的功耗。这个功耗由迁移时间内核的通信产生，在迁移时对应的两个核不处理任何任务。
 所以我们假设任务迁移时间的功耗小于任务处理时间的功耗。为保证安全，我们将任务迁移时的功耗设定为之前处理任务时的平均功耗，用这样的功耗提供给MPC做预测。
 
-作为比较，我们实现了另外两种基于MPC的方法，众核处理器基于MPC混合任务迁移和DVFS的动态温度管理方法 \cite{MaWang:APCCAS'14}和基于MPC只用DVFS的方法。
-我们也选择了 \cite{Hanumaiah:TCAD'11}中的动态温度管理方法作为对比，因为它和我们的研究有相同的目标，即改性能处理器有温度限制时最大化性能（吞吐量）。
-我们在实验中实现了开源项目 MAGMA V2，这个由 \cite{Hanumaiah:TCAD'11}的作者提供。MAGMA只能给出100核处理器的结果，对于更大的核数情况会有“超出内存”错误。
+作为比较，我们实现了另外两种基于MPC的方法，众核处理器基于MPC混合任务迁移和DVFS的动态温度管理方法~\cite{MaWang:APCCAS'14}和基于MPC只结合DVFS的方法~\cite{Zanini:ECCTD'09}。
+我们也选择了\cite{Hanumaiah:TCAD'11}中的动态温度管理方法作为对比，因为它和我们的研究有相同的目标，即改性能处理器有温度限制时最大化性能（吞吐量）。
+我们在实验中实现了开源项目 MAGMA V2，这个由\cite{Hanumaiah:TCAD'11}的作者提供。MAGMA只能给出100核处理器的结果，对于更大的核数情况会有“超出内存”错误。
 在这里所有的方法都用相同的激活周期，功耗信息和顶温度。
 
+\begin{pics}{不同DTM方法下的100核CPU瞬态温度（不同颜色代表不同核）}{fig:temp}
+   \addsubpic{不采用任何DTM方法}{width=0.45\columnwidth}{fig/T_bef}
+   \addsubpic{采用新的分层DTM方法}{width=0.45\columnwidth}{fig/T_aft}
+   \addsubpic{采用\cite{MaWang:APCCAS'14}中的DTM方法}{width=0.45\columnwidth}{fig/T_cer}
+   \addsubpic{采用\cite{Zanini:ECCTD'09}中的DTM方法 }{width=0.45\columnwidth}{fig/T_dvfs}
+ \end{pics}
+ 
 \section{与其他方法的瞬态温度比较}\label{sec:temp_comp}
 首先我们不进行任何温度管理让100核处理器在最大速度上运行。图~\ref{fig:temp} (a)就是这个处理器的瞬态温度。我们可以看出，核的温度大概是从 $90^{\circ}$C
 到 $120^{\circ}$C。温度在 $120^{\circ}$C 左右会影响芯片的可靠性。我们也测量了温度的方差，见图~\ref{fig:var_comp} (a)。可以看出，没有任何温度管理的情况下，核之间的温度差也很大。
 
-\begin{figure}[H]
-  \centering
-    \subfigure[Temperature traces without any DTM method.]
-  {
-    \includegraphics[width=0.32\columnwidth]{fig/T_bef}
-  }
-    \subfigure[Temperature traces with the new hierarchical DTM method activated at the $200$ second.]
-  {
-    \includegraphics[width=0.32\columnwidth]{fig/T_aft}
-  }
-  \subfigure[Temperature traces with DTM method in cite \protect\cite{MaWang:APCCAS'14} activated at the $200$ second.]
-  {
-    \includegraphics[width=0.32\columnwidth]{fig/T_cer}
-  }
-    \subfigure[Temperature traces with the DTM method with DVFS only activated at the $200$ second.]
-  {
-    \includegraphics[width=0.32\columnwidth]{fig/T_dvfs}
-  }
-
-  \caption{Transient temperature traces of the $100$-core
-    CPU with different DTM methods. Lines with different colors
-    represents temperature traces of different cores. The new method
-    in (b) and \cite{MaWang:APCCAS'14} in (C) both successfully tracks
-    the ceiling temperature. But the DVFS only method in (d) has many
-    low temperature cores, which means the chip performance is lower.}\label{fig:temp}
-\end{figure}
-\begin{figure}
-  \centering
-    \subfigure[The temperature variance without any DTM method.]
-  {
-    \includegraphics[width=0.32\columnwidth]{fig/var_bef}
-  }
-    \subfigure[The temperature variance with the new hierarchical DTM method activated at the $200$ second.]
-  {
-    \includegraphics[width=0.32\columnwidth]{fig/var_aft}
-  }
-  \subfigure[The temperature variance with DTM method in \protect\cite{MaWang:APCCAS'14} activated at the $200$ second.]
-  {
-    \includegraphics[width=0.32\columnwidth]{fig/var_cer}
-  }
-    \subfigure[The temperature variance with the DTM method with DVFS only activated at the $200$ second.]
-  {
-    \includegraphics[width=0.32\columnwidth]{fig/var_dvfs}
-  }
-
-  \caption{Transient variances among cores in the $100$-core
-    CPU with different DTM methods. The temperature variance of the
-    new method is slightly higher than that of the method in
-    \cite{MaWang:APCCAS'14}, but much lower than that of the DVFS only
-  method.}\label{fig:var_comp}
-\end{figure}
 
 接下来我们把顶温度设定在 $105^{\circ}$C，测试新的分层动态温度管理方法在100核处理器上的效果。
 分层动态温度管理方法在第200秒时被激活，激活周期为 $20$s。对应的瞬态温度就是图~\ref{fig:temp} (b)，对应的温度方差就是图~\ref{fig:var_comp} (b)。
 分层动态温度管理方法被激活之后，所有核的温度开始趋近于设定的顶温度 $105^{\circ}$C，核之间的温度差也减小了很多。
 
-作为对比， \cite{MaWang:APCCAS'14}中的基于MPC的结合任务迁移和DVFS的动态温度管理方法和基于MPC结合DVFS的方法也进行了测试。
+\begin{pics}[H]{不同DTM方法下的100核CPU核间瞬态温度方差}{fig:var_comp}
+   \addsubpic{不采用任何DTM方法}{width=0.45\columnwidth}{fig/var_bef}
+   \addsubpic{采用新的分层DTM方法}{width=0.45\columnwidth}{fig/var_aft}
+   \addsubpic{采用\cite{MaWang:APCCAS'14}中的DTM方法}{width=0.45\columnwidth}{fig/var_cer}
+   \addsubpic{采用\cite{Zanini:ECCTD'09}中的DTM方法 }{width=0.45\columnwidth}{fig/var_dvfs}
+ \end{pics}
+ 
+作为对比， \cite{MaWang:APCCAS'14} 中的基于MPC的结合任务迁移和DVFS的动态温度管理方法和 \cite{Zanini:ECCTD'09} 中基于MPC结合DVFS的方法也进行了测试。
 顶温度同样被设定为$105^{\circ}$C，所有的方法仍然在相同的时间点被激活，即第200秒，激活周期仍然是 $20$s。
 图~\ref{fig:temp} (c) (d) 和 图~\ref{fig:var_comp} (c) (d)就是这两种方法对应的瞬态温度，和核之间温度方差。
-我们提出的方法和 \cite{MaWang:APCCAS'14}中的方法有相似的瞬态温度，比 \cite{MaWang:APCCAS'14}中的核之间温度方差稍微大一点点（后面会介绍，新方法在开销和扩展性上比\cite{MaWang:APCCAS'14}要好得多）。
-基于MPC结合DVFS的动态温度管理方法在瞬态温度和核之间温度差上要比前两种方法差很多。
+新的分层动态热管理方法和 \cite{MaWang:APCCAS'14} 中的方法有相似的瞬态温度，比 \cite{MaWang:APCCAS'14}中的核之间温度方差稍微大一点点，
+说明新方法并不能最优地平衡整个芯片的温度（后面会介绍，新方法在开销和扩展性上比\cite{MaWang:APCCAS'14}要好得多）。
+\cite{Zanini:ECCTD'09} 中的动态温度管理方法在瞬态温度和核之间温度差上要比前两种方法差很多。
 
-下面我们对比 \cite{Hanumaiah:TCAD'11}中的方法。这个方法也是执行DVFS和任务迁移，来使核的温度趋近于顶温度。
+\begin{pics}{100核CPU执行\cite{Hanumaiah:TCAD'11}中的DTM方法的瞬态温度}{fig:magma}
+   \addsubpic{假设核间没有热交换的瞬态温度}{width=0.9\columnwidth}{fig/magma_100_max}
+   \addsubpic{有核间热交换的真实瞬态温度}{width=0.9\columnwidth}{fig/comp_magma_100}
+ \end{pics}
+下面我们对比 \cite{Hanumaiah:TCAD'11} 中的方法。这个方法也是执行DVFS和任务迁移，来使核的温度趋近于顶温度。
 不过，这个方法为了减小计算开销，在做动态温度管理决策的时候假设每个核都核其他核热隔离。这种假设在核数较少的多核芯片上或许可以，因为核数较少时，核之间有大面积的缓存区域阻隔了核间热交换。
 但是在众核情况下，因为每个核面积较小，热交换很明显，并且不能被忽略。
 该方法的100核处理器温度即图~\ref{fig:magma} (a)所示。因为这里的仿真步长较大，所以温度波形是直的线段。
 依据这样的温度来做动态温度管理决策，温度大部分时间都是趋近顶温度的。
 但是因为核与核之间的零热交换，所以这样的温度并不是实际的温度。
 我们修改了MAGMA 程序，画出了考虑核间热交换的实际温度，如图~\ref{fig:magma} (b)所示。
-我们很清楚地看到这个方法的动态温度管理决策不是优化的，会明显的超出实际温度的限制。
-从图~\ref{fig:magma}我们可以看出，温度控制有一个延时调整问题。
-这是因为在\cite{Hanumaiah:TCAD'11}的方法中，当当前温度并不完全等于顶温度的时候，核或者被关掉（如果当前温度高于顶温度），或者全速运行（如果当前温度低于顶温度）。
-但是在图~\ref{fig:temp}中，所有基于MPC的动态温度管理方法都没有这个问题，因为它们可以提前预测来做决策，这样就会是比较平滑的温度控制。
+我们很清楚地看到这个方法的动态温度管理决策不是最优的，会明显的超出实际温度的限制。
+核与核之间的热交换对众核处理器的温度具有极大的影响，导致严重超出 $105^{\circ}$C 的顶温度。
+从图~\ref{fig:magma} 我们可以看出，温度控制有一个延时调整问题。
+这是因为在 \cite{Hanumaiah:TCAD'11} 的方法中，当当前温度并不完全等于顶温度的时候，核或者被关掉（如果当前温度高于顶温度），或者全速运行（如果当前温度低于顶温度）。
+但是在图~\ref{fig:temp} 中，所有基于MPC的动态温度管理方法都没有这个问题，因为它们可以提前预测来做决策，这样就会是比较平滑的温度控制。
 
-\begin{figure}
-  \centering
-    \subfigure[Temperature traces of cores by assuming no heat exchange
-    among cores.]
-  {
-    \includegraphics[width=0.7\columnwidth]{fig/magma_100_max}
-  }
-    \subfigure[Actual temperature traces of cores by enabling heat
-    exchange among cores.]
-  {
-    \includegraphics[width=0.7\columnwidth]{fig/comp_magma_100}
-  }
-  \caption{Transient temperature traces of cores by performing DTM in
-    \cite{Hanumaiah:TCAD'11} on the $100$-core
-    microprocessor. Core to core heat exchange has huge impact on
-    temperatures for many-core microprocessors, causing the
-    $105^{\circ}$C ceiling temperature to be seriously violated. Overshoot
-    problem is also significant comparing to the MPC based techniques.}\label{fig:magma}
-\end{figure}
 
 表~\ref{tab:var} 记录了不同核数的处理器的核之间温度方差。表中 $var_o$ 是没用任何动态温度管理方法时核之间温度方差，
-$var_d$ 是基于MPC只结合DVFS的动态温度管理方法的核之间温度方差，
+$var_d$ 是 \cite{Zanini:ECCTD'09} 中动态温度管理方法的核之间温度方差，
 $var_c$ 是 \cite{MaWang:APCCAS'14} 中动态温度管理方法的核之间温度方差，
-$var_n$ 是我们的分层温度管理方法的核之间温度方差，
+$var_n$ 是新的分层动态温度管理方法的核之间温度方差，
 $var_h$ 是 \cite{Hanumaiah:TCAD'11} 中动态温度管理方法的核之间温度方差。
 不同核数的结果类似， \cite{MaWang:APCCAS'14} 中方法稍微优于我们的分层动态温度管理方法，基于MPC只结合DVFS的方法明显有较大的核间温度方差。
-\cite{Hanumaiah:TCAD'11} 中的方法只完成了 $100$ 核的实验，其核之间温度方差与 \cite{MaWang:APCCAS'14} 中的方法接近。
-
-\begin{table}
+\cite{Hanumaiah:TCAD'11} 中的方法只完成了 $100$ 核的实验，其核之间温度方差与 \cite{MaWang:APCCAS'14} 中的方法接近。\\
+\begin{table}[H]
 \centering
- \caption{The temperature variance among cores in CPUs with different core
-   configuration. $var_o$ is the variance without
-any DTM method,  
-$var_d$ is variance with DTM using DVFS only, 
-$var_c$ is variance with DTM in \cite{MaWang:APCCAS'14}, 
-and $var_n$ is variance with our
-new hierarchical method, and $var_h$ is the variance with method in \cite{Hanumaiah:TCAD'11}. \label{tab:var}}{
+ \caption{不同核数CPU的核间温度方差 \label{tab:var}}{
  \begin{tabular}{|c|c|c|c|c|c|}
  \hline
  \hline
@@ -216,7 +163,7 @@ new hierarchical method, and $var_h$ is the variance with method in \cite{Hanuma
  我们的新方法主要由MPC，二部图匹配（任务迁移），最小割划分组成。为更好分析，我们将算法的总执行时间分为MPC时间 $t_p$ ，匹配时间 $t_m$ ，最小割划分时间 $t_a$ 。
  匹配操作的执行时间一部分为低层匹配时间，另一部分为高层匹配时间。对于低层匹配时间，如果这里有多个匹配操作在并行执行，我们只计最长的一个，这个时间才是主导延时的时间。
  \cite{MaWang:APCCAS'14} 中的方法也有MPC时间 $t_p$ 和匹配时间 $t_m$ ，但是没有最小割划分时间 $t_a$ 。
- 只用DVFS的方法只有MPC时间 $t_p$。
+\cite{Zanini:ECCTD'09} 中的方法只有MPC时间 $t_p$。
  尽管 \cite{Hanumaiah:TCAD'11} 中的方法只完成了100核的情况，但是我们还是可以测试它的任务迁移时间 $t_m$ 。我们可以用正确维度的随机矩阵输入给对应的函数。
  表~\ref{tab:time}记录了各算法在不同核数处理器上的执行时间。很显然随核数增长， \cite{MaWang:APCCAS'14} 中的方法开销明显上升。
  从400核的情况开始，每秒的平均管理决策时间要超过1s，这是完全不能接受的。
@@ -225,43 +172,38 @@ new hierarchical method, and $var_h$ is the variance with method in \cite{Hanuma
  这篇论文中假设 $n=q$ ，那么当核数增长额时候， $O(n^6)$ 的复杂度使任务迁移占用了太多的时间。
  相对地，我们新的分层算法的计算时间增长缓慢。即使是625核的情况（这已经是很大的核数了），我们的方法平均每秒消耗 4 ms 做管理决策。
  这仅仅是 $0.4\%$ 的计算时间花费在少数几个核上，因此这个可以被忽略。
- 当然，仅仅用DVFS的方法需要最少的时间计算开销，但是我们的新方法只在任务迁移上花费很少的开销就使性能显著提成，下面将继续介绍。
- 
-  \begin{table*}[h]
-\tabcolsep=2pt
- \caption{The average runtime per second of the DTM methods on CPUs with
-   different core configurations. $t_p$ represents MPC time, 
-$t_m$ means task migration matching time, and $t_a$  denotes for minimum cut partitioning time.\label{tab:time}}{
- \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
- \hline
-	        & \multicolumn{4}{c|}{分层方法} & \multicolumn{3}{c|}{\cite{MaWang:APCCAS'14}} & \multicolumn{2}{c|}{仅DVFS方法}& \multicolumn{2}{c|}{\cite{Hanumaiah:TCAD'11}} \\
- \hline
-核数	& $t_p$ & $t_m$ &$t_a$ &
-$t_{all}$ & $t_p$ & $t_m$ &$t_{all}$  &
-$t_p$ &$t_{all}$ & $t_{m}$ &$t_{all}$\\
-                               &   $(10^{-4}s)$ & $(10^{-4}s)$ &
-                               $(10^{-4}s)$ & $(10^{-4}s)$ & $(10^{-4}s)$
-                               &   $(s)$  & $(s)$  & $(10^{-4}s)$ & $(10^{-4}s)$ &   $(s)$  & $(s)$\\
- \hline 
- \hline
-$100$ & 1.58 & 1.63  & 0     & 3.21 & 1.49 & 0.01 & 0.01 & 1.60 & 1.60 & 0.01 & 0.01\\
- \hline
-$256$ & 2.85 & 19.26 & 1.58  & 23.7 & 2.93 & 0.45 & 0.45 & 2.80 & 2.80 & 0.09 & 0.09\\
- \hline
-$400$ & 4.88 & 7.77  & 3.27  & 15.9 & 5.38 & 1.90 & 1.90 & 5.29 & 5.29 & 0.34 & 0.34\\
- \hline
-$625$ & 9.09 & 12.27 & 17.49 & 38.8 & 8.27 & 8.63 & 8.63 & 8.87 & 8.87 & 0.99 & 0.99\\
- \hline
- \hline
- \end{tabular}}
- \end{table*}
+ 当然，\cite{Zanini:ECCTD'09} 中的方法需要最少的时间计算开销，但是我们的新方法只在任务迁移上花费很少的开销就使性能显著提成，下面将继续介绍。
+ \begin{table*}
+   \tabcolsep=2pt
+    \caption{不同核数CPU应用各种DTM方法的每秒平均计算时间\label{tab:time}}{
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
+    \hline
+   	        & \multicolumn{4}{c|}{分层方法} & \multicolumn{3}{c|}{\cite{MaWang:APCCAS'14}} & \multicolumn{2}{c|}{\cite{Zanini:ECCTD'09}}& \multicolumn{2}{c|}{\cite{Hanumaiah:TCAD'11}} \\
+    \hline
+   核数	& $t_p$ & $t_m$ &$t_a$ &
+   $t_{all}$ & $t_p$ & $t_m$ &$t_{all}$  &
+   $t_p$ &$t_{all}$ & $t_{m}$ &$t_{all}$\\
+                                  &   $(10^{-4}s)$ & $(10^{-4}s)$ &
+                                  $(10^{-4}s)$ & $(10^{-4}s)$ & $(10^{-4}s)$
+                                  &   $(s)$  & $(s)$  & $(10^{-4}s)$ & $(10^{-4}s)$ &   $(s)$  & $(s)$\\
+    \hline 
+    \hline
+   $100$ & 1.58 & 1.63  & 0     & 3.21 & 1.49 & 0.01 & 0.01 & 1.60 & 1.60 & 0.01 & 0.01\\
+    \hline
+   $256$ & 2.85 & 19.26 & 1.58  & 23.7 & 2.93 & 0.45 & 0.45 & 2.80 & 2.80 & 0.09 & 0.09\\
+    \hline
+   $400$ & 4.88 & 7.77  & 3.27  & 15.9 & 5.38 & 1.90 & 1.90 & 5.29 & 5.29 & 0.34 & 0.34\\
+    \hline
+   $625$ & 9.09 & 12.27 & 17.49 & 38.8 & 8.27 & 8.63 & 8.63 & 8.87 & 8.87 & 0.99 & 0.99\\
+    \hline
+    \hline
+    \end{tabular}}
+    \end{table*}
+   
 
-\begin{table}[h]
+\begin{table}
 \centering
- \caption{The average number of instructions per second of one core on
-   CPUs with different configurations. $MIPS_o$ represents the IPS in million (MIPS) of the core without any DTM method,
-$MIPS_d$ is for MIPS of DTM with DVFS only,
-and $MIPS_n$ denotes MIPS of our new hierarchical method.\label{tab:ips}}{
+ \caption{不同核数CPU采用各种DTM方法的每核平均IPS \label{tab:ips}}{
  \begin{tabular}{|c|c|c|c|}
  \hline
  \hline
@@ -288,18 +230,21 @@ and $MIPS_n$ denotes MIPS of our new hierarchical method.\label{tab:ips}}{
  所以在性能对比中并没有考虑这两个方法。
  表~\ref{tab:ips} 记录了采用新分层方法和仅采用DVFS的方法时的平均 IPS。
  在表中 ， $MIPS_o$ 表示不采用任何动态温度管理方法时单个处理器核的平均IPS（以百万计就是MIPS），
- $MIPS_d$ 表示采用DVFS方法时单个处理器核的平均IPS，
- $MIPS_n$ 表示采用我们的新方法时单个处理器核的平均IPS
+ $MIPS_d$ 表示采用 \cite{Zanini:ECCTD'09} 中方法时单个处理器核的平均IPS，
+ $MIPS_n$ 表示采用我们的新方法时单个处理器核的平均IPS。
  $MIPS_o$ 是理想性能，是在处理器没有任何温度限制的情况下取得的。
   $MIPS_n$ 只比  $MIPS_o$ 小一点，说明在确定管理决策时，我们新的分层算法是很有效的。
-  从表中可以看出，我们的新算法在性能上优于只采用DVFS的算法。
-  尽管新算法有稍微大一点的开销，但是消耗在任务迁移决策的时间减少了DVFS激活的次数，带来的是性能收益。
-  我们注意到，新方法相比于DVFS方法在吞吐量上的提升和运行的应用有很大关系。
-  比如，如果这里有很低温度的核（甚至是闲置无任务的核），新方法就会比DVFS方法有更明显的吞吐量提升，
+  从表中可以看出，新的分层算法在性能上优于 \cite{Zanini:ECCTD'09} 中的算法。
+  尽管新算法有稍微大一点的开销，但是消耗在任务迁移决策的时间减少了 DVFS 激活的次数，带来的是性能收益。
+  我们注意到，新方法相比于 \cite{Zanini:ECCTD'09} 中的方法在吞吐量上的提升和运行的应用有很大关系。
+  比如，如果这里有很低温度的核（甚至是闲置无任务的核），新方法就会比 \cite{Zanini:ECCTD'09} 中方法有更明显的吞吐量提升，
   因为低温核可以被任务迁移充分利用，减少DVFS操作。
   
+ \section{本章小结}\label{sec:xiaojie6}
  
- 
+ 本章实现了新提出了分层动态温度管理方法，并且实现了其他几张方法来做比较。通过比较，虽然在瞬态温度方差上新的分层方法并不是最好的结果，并不能最优地平衡芯片温度，但是也与 \cite{MaWang:APCCAS'14} 相差不大。
+ 在众核系统中新的分层方法与 \cite{MaWang:APCCAS'14}、 \cite{Hanumaiah:TCAD'11}相比是在可扩展性和小开销上具有巨大的优势。
+ 在计算开销上新的分层算法要比 \cite{Zanini:ECCTD'09} 中的差，但是新的方法提升了处理器性能。所以总体来说，新的分层动态温度管理方法比其他方法有很大优势。
  
  
  
