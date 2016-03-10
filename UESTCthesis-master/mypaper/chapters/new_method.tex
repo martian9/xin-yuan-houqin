@@ -74,13 +74,13 @@ $w(p_i, p_j) = 0$， $w(\bar{p}_i, \bar{p}_j) = 0$  。
 \begin{pics}{分层算法在100核微处理器上的高层处理过程示例}{fig:partitioning}
   \centering
     \addsubpic{图 $\mathcal{G}_p$ （为简化并未表示出边和权重）}
-  {width=0.32\columnwidth}{fig/partition}
+  {width=0.4\columnwidth}{fig/partition}
   \addsubpic{ $\mathcal{G}_p$上的初始割（改进迭代最小割算法的第一步）}
-  {width=0.32\columnwidth}{fig/partition3}
+  {width=0.4\columnwidth}{fig/partition3}
   \addsubpic{$\mathcal{G}_p$上的最小割，每个高层块中的二部图匹配}
-  {width=0.32\columnwidth}{fig/match_aft_partition}
+  {width=0.4\columnwidth}{fig/match_aft_partition}
   \addsubpic{对未匹配的功耗用DVFS做最后调整}
-  {width=0.32\columnwidth}{fig/DVFS}
+  {width=0.4\columnwidth}{fig/DVFS}
 \end{pics}
 
 作为一个迭代算法，第一步是做一个初始割，将 $V_p$ 分成两个子集 $V_{p1}$ 和 $V_{p2}$。
