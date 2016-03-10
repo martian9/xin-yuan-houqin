@@ -7,15 +7,15 @@ echo 请关闭打开的%jobname%.pdf再重新执行。
 pause
 exit
 ) 
-pdflatex .\%jobname%.tex
+pdflatex -synctex=-1 .\%jobname%.tex
 makeindex -s %jobname%.ist -t %jobname%.glg -o %jobname%.gls %jobname%.glo
 makeindex -s %jobname%.ist -t %jobname%.alg -o %jobname%.acr %jobname%.acn
 bibtex .\%jobname%.aux
 bibtex .\publications.aux
-pdflatex .\%jobname%.tex
+pdflatex -synctex=-1 .\%jobname%.tex
 makeindex -s %jobname%.ist -t %jobname%.glg -o %jobname%.gls %jobname%.glo
 makeindex -s %jobname%.ist -t %jobname%.alg -o %jobname%.acr %jobname%.acn
-pdflatex .\%jobname%.tex
+pdflatex -synctex=-1 .\%jobname%.tex
 call clean.bat
 cls
 echo ****************************************************************************
