@@ -1,8 +1,32 @@
 % !Mode:: "TeX:UTF-8"
 
-\begin{Eabstract}{$M-$matrices}{$H-$matrices}{Drazin inverse}{Pseudo-Drazin inverse}{Condition number}
-The theory that the inverse of a nonsingular matrix is continuous function of the elements of the matrix was established by J.\nbs H.\nbs Wilkinson\citeup{iflai1977}. The continuity of the generalized inverse $A^+$ of a matrix $A$ was introduced by G.\nbs W.\nbs Stewart\citeup{crawfprd1995}. In this paper, at first, the continuity of the special matrices inverse, such that $M-$matrices and $H-$matrices, respectively, are provided. Campbell and Meyer\citeup{zhaoyaodong1998} also established the continuity properties of Drazin inverse, but the explicit bound was not given.\par
-The Drazin inverse is unstable with respect to perturbation. However, under some specific perturbation , the closeness of the matrices $(A+E)^D$ and $A^D$ can be proved and the explicit bound the relation error can also be obtained. Based on the different representations of Drazin inverse, many scientists and scholars have worked it research. U.\nbs G.\nbs Rothblum gave the following representation of Drazin inverse:
-$$A^D=(A-H)^{-1}(I-H)=(I-H)(A-H)^{-1}$$
-where $H=I-AA^D=I-A^DA$. Based on the representation, we also obtain the norm estimate of $\|(A+E)^D-A^D\|_2/\| A^D\|$ and $\|(A+E)^\sharp-A^D\|_2/\|A^D\|_2$ and compare with the precedent results.
+\begin{Eabstract}{many-core}{DTM}{MPC}{task migration}{DVFS}
+ With the development of many-core processors, power density is still rising,
+ and the load imbalance problem is more serious plus, become a serious chip high-temperature and local hot spots issues. 
+ High-temperature heat has become an important factors that hinder the development of the processor. 
+ In response to chip thermal problem, we made a deep research.
+ Research focuses on the dynamic thermal management(DTM). 
+ For recent DTM, there is a detailed analysis. 
+ Dynamic thermal management commonly used technique are dynamic voltage frequency scaling (DVFS) technique and task migration technique,
+ there is a thorough analysis in those technique. Guidance control technology needed by dynamic thermal management is also analyzed, 
+ especially the model predictive control (MPC). HotSpot is a compact and  accurate thermal modeling methods, 
+ the proposed method with which to make a thermal model of the chip, 
+ combined with MPC to do temperature calculation. 
+ After the introduction of MPC, policy decision for task migration is turned into task allocation issue, 
+ the bipartite graph matching methods can be used to resolve the problem.
+ 
+ Because of high complexity of bipartite graph matching algorithm, 
+ with the number of cores increase, the computation time become large, 
+ so runtime DTM is a huge problem in high-performance many-core processor. 
+ In this paper , a hierarchical DTM is proposed to overcome this problem. 
+ The new DTM  use traditional DVFS technique and task migration, 
+ combine with MPC to do a theoretical basis  achieving a smooth  control and reducing the cost of computing performance.
+ To extend to many-core systems, hierarchical control method designed to two level. 
+ In the low-level cores spatially divided into blocks, 
+ there is a match between the existing power distribution within the block and optimized power distribution form MPC. 
+ It the top-level, unmatch powers in low-level are collected to do task migration globally. 
+ If the number of high-level powers is large, we use improved minimal cut iterative algorithm to assist migration strategy. 
+ Finally, DVFS  is used to adjust the final unmatch power. The new method is  implemented, 
+ and compared with other methods. 
+ The results show that the new method with little performance loss has a great advantage over other existing methods.
 \end{Eabstract}
