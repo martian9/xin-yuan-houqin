@@ -33,7 +33,7 @@
 在第\ref{chap:model}章中已经介绍过，热系统和电路系统是相似的，我们可以用热阻，热容，和等效的热电流电压源来建立微处理器的热模型。
 在硅片层，这里假设核按规则网格排列，类似于图 \ref{fig/9core}所示 $9$核处理器核分布。这样对硅片层的划分就可以按照核划分为规则的网格单元。
 \pic{9核处理器核分布}{width=0.5\columnwidth}{fig/9core}
-类似于电路系统，$l$ 核的微处理器热模型可以被表达为常微分方程~\cite{WangTan:TODAES'13}，即式 \eqref{eq:therm_model_cont}。
+类似于电路系统，$l$ 核的微处理器热模型可以被表达为常微分方程~\citeup{WangTan:TODAES'13}，即式 \eqref{eq:therm_model_cont}。
 \begin{equation}\label{eq:therm_model_cont} 
 \begin{split}
 G T(t) + C \dot{T}(t) &= B_c P(t)\\
@@ -273,7 +273,7 @@ $INF $ 表示其差值超过阈值直接被设定为无限大，不能匹配。
 因此这个方法是至少指数运行时间复杂度的算法。
 
  事实上存在更好的算法解决这个问题，1950年代詹姆士·芒克勒斯就将匹配问题简化成多项式复杂度的算法，
- 叫做芒克勒斯算法或者有时成为匈牙利算法~\cite{munkres1957algorithms}。
+ 叫做芒克勒斯算法或者有时成为匈牙利算法~\citeup{munkres1957algorithms}。
  这个二部图匹配问题可以用匈牙利算法解决，匈牙利算法的第一步就是将权重矩阵 $W$ 每一行中的最小值找出，每一行各元素都减去该行最小值，得到矩阵 $W_r$。
  \begin{equation}
 W_r= 

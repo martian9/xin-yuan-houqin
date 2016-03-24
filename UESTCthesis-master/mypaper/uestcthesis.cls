@@ -497,7 +497,7 @@
 }
 \newcommand{\Cabstractfancy}{%
 \fancyhf{}%
-\fancyhead[C]{\zihao{5}摘要}%页眉居中打印“摘要”
+\fancyhead[C]{\zihao{5}摘\enspace 要}%页眉居中打印“摘要”
 \fancyfoot[C]{\zihao{-5}\thepage}%页码位于页面底端，居中打印。
 }
 \newcommand{\Eabstractfancy}{
@@ -507,7 +507,7 @@
 }
 \newcommand{\tocmatterfancy}{
 \fancyhf{}
-\fancyhead[C]{\zihao{5}\tocname@uestcthesis}%页眉居中打印“目　录”
+\fancyhead[C]{\zihao{5}\contentsname@uestcthesis}%页眉居中打印“目　录”
 \fancyfoot[C]{\zihao{-5}\thepage}%页码位于页面底端，居中打印。
 }
 \newcommand{\glossarymatterfancy}{%定义主要符号表版式设置
