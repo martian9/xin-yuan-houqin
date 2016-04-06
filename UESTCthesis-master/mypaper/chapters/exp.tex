@@ -5,13 +5,13 @@
 前面的章节已经介绍了众核处理器动态温度管理方法的基础知识，也详细说明了新提出的动态温度管理方法。
 接下来就要实现新的算法，并验证该算法比其他方法更有优势。
  \ref{sec:method_implement} 主要介绍算法实现的详细细节。 
- \ref{sec:result_c} 说明新的未分层的动态温度管理方法的实验结果及比较。
- \ref{sec:result_h} 说明新的分层方法的实验结果及比较。
+ \ref{sec:result_c} 说明第\ref{chapter:mpc}章描述的未分层的动态温度管理方法的实验结果及比较。
+ \ref{sec:result_h} 说明第\ref{chpter:new_method}章描述的分层方法的实验结果及比较。
  %后面三节介绍新的算法与其他动态温度管理方法的优劣， \ref{sec:temp_comp} 介绍瞬态温度上的比较， \ref{sec:time_comp} 介绍算法占用的计算时间开销的比较，
  %\ref{sec:ips_comp} 进行采用不同动态温度管理算法时的处理器性能比较。
 \section{新的动态热管理方法的实现}\label{sec:method_implement}
 本论文中新的动态温度管理方法的实现是在一个具有两个 8 核 16 线程 CPU 的 linux 服务器上进行的，每个 CPU 主频为 2.90GHZ，服务器内存 64GB。
-新的动态热管理方法主要用 MATLAB 实现。主要分为两部分，第一部分为第\ref{chapter:mpc}章描述的未分层方法，和第二部分第\ref{chpter:new_method}章描述的分层方法。
+新的动态热管理方法主要用 MATLAB 实现，主要分为两部分，第一部分为第\ref{chapter:mpc}章描述的未分层方法，和第二部分第\ref{chpter:new_method}章描述的分层方法。
 对未分层方法我们构建了四个不同核数量的处理器，从 $16$  核 （$4 \times 4$） 到 $49$  核 （$7 \times 7$）。
 针对分层方法我们也构建了四个不同处理器核数量配置的众核处理器，从 $100$ 核（$10 \times 10$）到 $625$ 核（$25 \times 25$）。
 这些处理器的热模型由 HotSpot 生成，HotSpot 已经有完整的工具可以直接调用。环境温度设定为 $20^{\circ}$C。
