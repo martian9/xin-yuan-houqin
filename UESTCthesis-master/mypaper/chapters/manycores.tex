@@ -13,7 +13,7 @@
 
 
 
-\section{温度不受管理的影响}\label{sec:adverse}
+\section{高温对芯片的影响}\label{sec:adverse}
 
 因为我们持续减小芯片大小和要求高功耗下的性能，增长的芯片复杂性和功耗密度提高了芯片的峰值温度，也使温度梯度更加不均衡。
 上升的峰值温度缩短芯片寿命，降低芯片性能，影响可靠性也增加散热成本~\citeup{skadron:TACO'04}。上升的温度和静态功耗之间有正反馈的关系，有可能造成热失控。
@@ -72,12 +72,7 @@ I_{leak} = I_s \cdot A \cdot T^2e^{\frac{\alpha + \beta V_{dd}}{T}}+B
 \end{equation}
 其中， 对于指定的技术， $A$ 、 $B$ 、  $\alpha$ 、 $\beta$ 是温度无关的正常数。
 $V_{dd}$ 是供电电压，$I_s$ 是在指定温度和供电电压下的基准漏电流。
-我们可以看出温度对漏电流的影响是 $T^2e^{1/T}$ 。图~\ref{fig:leakage}是漏电流对温度的曲线。
-\begin{figure}
-  \centering
-    \includegraphics[width=0.7\columnwidth]{fig/leakage}
-  \caption{温度与漏电流的关系}\label{fig:leakage}
-\end{figure}
+我们可以看出温度对漏电流的影响是 $T^2e^{1/T}$ 。
 
 \subsection{温度对冷却系统的影响}\label{sec:cooling}
 
@@ -168,7 +163,7 @@ $f$ 是操作频率，$V_{dd}$ 是电源电压， $I_l$ 为漏电流。
 
 动态电压频率调整技术降低电压可以有效地减少功耗。
 动态功耗可以显著减少，因为上面显示 $P_d \propto V^2$ 。静态功耗也可以减少。
- 降低电源电压会限制操作频率~\cite{suleiman2005dynamic}，其关系可表示为：
+ 降低电源电压会限制操作频率~\citeup{suleiman2005dynamic}，其关系可表示为：
  \begin{equation}\label{eq:fv}
  f \propto \frac{(V_{dd} - V_t)^2}{V_{dd}} 
  \end{equation}
@@ -177,9 +172,9 @@ $f$ 是操作频率，$V_{dd}$ 是电源电压， $I_l$ 为漏电流。
  当电源电压也降低一半时，功耗将会继续降低，但是任务完成时间并没有继续延长，这样能量也被减少了。如图~\ref{fig:energy}所示。
  
 \begin{pics}{任务的功耗与能耗}{fig:energy}
-\addsubpic{最大电压频率运行时的功耗与能耗}{width=0.5\columnwidth}{fig/energy1}
-\addsubpic{频率减半时的功耗与能耗}{width=0.5\columnwidth}{fig/energy2}
-\addsubpic{电压频率都减半时的功耗与能耗}{width=0.5\columnwidth}{fig/energy3}
+\addsubpic{最大电压频率运行时的功耗与能耗}{width=0.4\columnwidth}{fig/energy1}
+\addsubpic{频率减半时的功耗与能耗}{width=0.4\columnwidth}{fig/energy2}
+\addsubpic{电压频率都减半时的功耗与能耗}{width=0.4\columnwidth}{fig/energy3}
 \end{pics}
 
 为了在多频处理器上执行 DVFS 操作，操作系统需要先预测或者估计将来的任务负载（比如通过 MPC 方法，后面会介绍），然后将其转换为频率值 $f_{des}$。
