@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="123.29954"
-     inkscape:cy="230.75939"
+     inkscape:zoom="1.979899"
+     inkscape:cx="315.02953"
+     inkscape:cy="66.717051"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -76,7 +76,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -95,13 +95,13 @@
     <text
        sodipodi:linespacing="125%"
        id="text4152"
-       y="956.1698"
-       x="151.19112"
+       y="948.59363"
+       x="175.18224"
        style="font-style:normal;font-weight:normal;font-size:27.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        xml:space="preserve"><tspan
-         style="font-size:35px"
-         y="956.1698"
-         x="151.19112"
+         style="font-size:20px"
+         y="948.59363"
+         x="175.18224"
          id="tspan4154"
          sodipodi:role="line">优化器</tspan></text>
     <rect
@@ -114,13 +114,13 @@
     <text
        sodipodi:linespacing="125%"
        id="text4152-3"
-       y="957.27094"
-       x="381.38367"
+       y="951.21002"
+       x="403.10196"
        style="font-style:normal;font-weight:normal;font-size:27.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        xml:space="preserve"><tspan
-         style="font-size:35px"
-         y="957.27094"
-         x="381.38367"
+         style="font-size:20px"
+         y="951.21002"
+         x="403.10196"
          id="tspan4154-8"
          sodipodi:role="line">热模型</tspan></text>
     <path
