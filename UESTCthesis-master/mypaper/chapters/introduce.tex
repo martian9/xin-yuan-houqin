@@ -22,7 +22,7 @@ CMOS 技术的不断发展，功耗密度不断增长，就出现了高温热问
 所以找到经济和有效地方法去解决热问题同时提高多核和众核芯片的性能和可靠性仍然是一个挑战~\citeup{Brooks:MICRO'07}。
 
 
-解决热问题可以从多方面来考虑，比如改进散热系统，改进芯片功能单元布局规划或者采用动态温度管理（DTM）技术。
+解决热问题可以从多方面来考虑，比如改进散热系统，改进芯片功能单元布局规划或者采用动态温度管理（dynamic thermal management，简称DTM）技术。
 传统空气散热方法因为其简单和低成本仍然被广泛应用。热问题更加严重，研究者也开始寻找更有效的冷却方法，已经有研究者开始研究液体冷却技术，因为水的比热较大。
 
 针对处理器芯片热问题尤其是高性能芯片，在微体系结构级进行动态温度管理还是有巨大优势。
@@ -50,10 +50,10 @@ CMOS 技术的不断发展，功耗密度不断增长，就出现了高温热问
 %处理器在高性能水平运行时，动态温度管理通过控制处理器的运行行为，来保证处理器在安全温度以内。
 %动态温度管理一般有两个方法，任务迁移和动态电压频率调整（DVFS），
 \begin{enumerate}
-\item 任务迁移 :  ~ 任务迁移方法通过交换多核或者众核处理器上任务来降低芯片的最高温度 \citeup{Powell:ASPLOS'04,Ge:DAC'10,Chantem:TVLSI'11,Liu:DATE'12,Ayoub:ISLPED'09,Ebi:ICCAD'09} ，
+\item 任务迁移 :  ~ 任务迁移方法\citeup{Powell:ASPLOS'04,Ge:DAC'10,Chantem:TVLSI'11,Liu:DATE'12,Ayoub:ISLPED'09,Ebi:ICCAD'09}通过交换多核或者众核处理器上任务来降低芯片的最高温度  ，
 而且也可以降低多核系统的能量损耗 \citeup{Cong:ISLPED'12}。
 所有核都在最大速度运行，所以任务迁移方法能使处理器得到更高的性能。但是如果没有其他动态温度管理方法的话，这个可能还是会有局部温度太高的问题。
-\item 动态电压频率调整（DVFS） :  ~ 动态电压频率调整（DVFS）\citeup{Skadron:ISCA'03,Jayaseelan:ICCAD'09,Mutapcic:TCASI'09} 控制电压和操作频率来调整芯片的温度。
+\item 动态电压频率调整（dynamic voltage frequency scaling，简称DVFS）:  ~动态电压频率调整\citeup{Skadron:ISCA'03,Jayaseelan:ICCAD'09,Mutapcic:TCASI'09} 就是通过控制电压和操作频率来调整芯片的温度。
  最近，DVFS 也应用于暗硅领域 \citeup{Khdr:dac'15,Muthukaruppan:dac'13}，它随温度限制来改变电压和频率水平。
  DVFS 可以保证芯片的温度安全，但是因为频率的降低，芯片的计算性能就要下降。
 \end{enumerate}
@@ -71,7 +71,7 @@ CMOS 技术的不断发展，功耗密度不断增长，就出现了高温热问
  这种方法中虽然温度预测比较准确，能够降低芯片的平均温度，减少局部高温点，但是这种方法还是不能保证芯片温度在安全温度以下，而且对于高性能众核处理器来说效果将会变差。
  研究方向也多样，有针对性能的优化的混合方法 \citeup{Hanumaiah:TCAD'11}，有针对能耗的优化的混合方法 \citeup{Hanumaiah:TCOMP'14,Tan:ASPDAC'15}。
  
- 最近，模型预测方法（MPC）被引入动态温度管理~\citeup{Zanini:ECCTD'09,Wang:ISCA'09,Bartolini:TPDS'13}。MPC利用芯片的热模型输出功率上的管理建议。
+ 最近，模型预测方法（model predictive control，简称MPC）被引入动态温度管理~\citeup{Zanini:ECCTD'09,Wang:ISCA'09,Bartolini:TPDS'13}。MPC利用芯片的热模型输出功率上的管理建议。
  因为这个方法在热行为上进行预测来得到更加有效的控制，所以 MPC 可以提供更有效和更精确的管理建议。对比于传统的方法，应用 MPC 有明显的性能提高~\citeup{Bartolini:TPDS'13}。
  很多研究方法结合 MPC 和 DVFS~\citeup{Zanini:ECCTD'09,Wang:ISCA'09,Bartolini:TPDS'13}，只用 DVFS 不能将处理器性能发挥到最大。
  
